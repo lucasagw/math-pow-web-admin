@@ -3,7 +3,7 @@ export interface CreateLevelDTO {
   title: string;
   description: string;
   startIn: number;
-  numberOfStart: number;
+  numberOfStars: number;
 }
 
 export interface UpdateLevelDto {
@@ -11,5 +11,5 @@ export interface UpdateLevelDto {
   title: string;
   description: string;
   startIn: number;
-  numberOfStart: number;
+  numberOfStars: number;
 }
