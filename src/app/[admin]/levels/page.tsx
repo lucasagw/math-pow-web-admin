@@ -1,12 +1,13 @@
-import { Button, Input } from "@nextui-org/react";
-import { FormEvent } from "react";
 import { useLevelStore } from "./store/levelStore";
 // Actions
 import * as levelActions from "./actions";
+// Components
+import { Button, Input } from "@nextui-org/react";
+import LevelCard from "./components/LevelCard";
 
 const Levels = async () => {
-  const { levels, fetchAll } = useLevelStore.getState();
-  await fetchAll();
+  const { levels } = useLevelStore.getState();
+  await levelActions.loadLevels();
 
   return (
     <main className="flex-1">
@@ -23,6 +24,14 @@ const Levels = async () => {
           }
         />
       </form>
+      <section className="flex flex-col mt-4 gap-4 flex-1 h-[70vh] overflow-auto">
+        {levels.map((level, idx) => (
+          <LevelCard level={level} key={idx} />
+        ))}
+      </section>
+      <div className="mt-4">
+        <Button className="w-full bg-secondary text-white">Criar novo</Button>
+      </div>
     </main>
   );
 };

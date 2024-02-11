@@ -1,7 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import z from "zod";
-import levelRepo from "../repositories/levelRepo";
 import { useLevelStore } from "../store/levelStore";
 
 const schema = z.object({
@@ -22,5 +21,17 @@ export async function submitForm(formData: FormData) {
       "Error when we tried to submit form search in levels page",
       error
     );
+  }
+}
+
+export async function loadLevels() {
+  try {
+    const { fetchAll } = useLevelStore.getState();
+    await fetchAll();
+    revalidatePath("/admin/levels");
+  } catch (error) {
+    console.error("Error when we tried to load levels  in levels page", error);
+  } finally {
+    revalidatePath("/admin/levels");
   }
 }
