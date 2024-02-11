@@ -58,10 +58,12 @@ class LevelRepo {
 
   async getLevels() {
     try {
-      const levelRef = this.getDocRef();
-      const levelsSnapshot = await getDoc(levelRef);
-      if (!levelsSnapshot.exists()) return [];
-      const levels: ILevel[] = levelsSnapshot.data() as ILevel[];
+      const levelsSnapshot = await getDocs(levelCollectionRef);
+      if (levelsSnapshot.empty) return [] as ILevel[];
+      const levels: ILevel[] = [];
+      levelsSnapshot.forEach((doc) => {
+        levels.push(doc.data() as ILevel);
+      });
       return levels;
     } catch (error) {
       console.error("Error when we tried to getLevels", error);
