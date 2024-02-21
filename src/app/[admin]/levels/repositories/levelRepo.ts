@@ -30,7 +30,8 @@ class LevelRepo {
 
   async createLevel(levelDto: CreateLevelDTO) {
     try {
-      await addDoc(levelCollectionRef, levelDto);
+      const newLevelRef = this.getDocRef();
+      await setDoc(newLevelRef, { ...levelDto, uid: newLevelRef.id });
     } catch (error) {
       console.error("Error when we tried to create level", error);
     }
