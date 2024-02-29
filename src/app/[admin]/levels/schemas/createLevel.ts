@@ -23,11 +23,10 @@ export const createLevelSchema = z.object({
     })
     .min(1, "Deve ser entre 1 e 5")
     .max(5, "Deve ser entre 1 e 5"),
-  startIn: z.coerce
-    .number({
-      required_error: "É necessário informar o intervalo de ínicio!",
-    })
-    .min(100, "O mínimo é 100!"),
+  startIn: z.coerce.number({
+    required_error: "É necessário informar o intervalo de ínicio!",
+  }),
+
   imageUrl: z.any(),
   // imageUrl: z
   //   .any()

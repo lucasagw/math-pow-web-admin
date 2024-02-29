@@ -14,9 +14,9 @@ const NavHeader = () => {
     <Navbar className="bg-primary text-white">
       <NavbarBrand>
         {/* <AcmeLogo /> */}
-        <p className="font-bold text-inherit">ACME</p>
+        <p className="font-bold text-inherit">BES T21</p>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      {/* <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
           <Link color="foreground" href="#">
             Features
@@ -42,7 +42,7 @@ const NavHeader = () => {
             Sign Up
           </Button>
         </NavbarItem>
-      </NavbarContent>
+      </NavbarContent> */}
     </Navbar>
   );
 };
