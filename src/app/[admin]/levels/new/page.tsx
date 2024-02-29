@@ -3,19 +3,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 // Components
 import { Button, Input } from "@nextui-org/react";
+import Image from "next/image";
 // Schemas
 import { createLevelData, createLevelSchema } from "../schemas";
 // Stores
 import { useLevelStore } from "../store/levelStore";
 // Navigation
 import { useRouter } from "next/navigation";
+import { ChangeEvent, useRef, useState } from "react";
 
 const NewLevel = () => {
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { storeLevel } = useLevelStore();
+  const { storeLevel, isLoadingNewLevel } = useLevelStore();
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors, isValid, isSubmitting },
   } = useForm<createLevelData>({
     resolver: zodResolver(createLevelSchema),
@@ -33,6 +39,23 @@ const NewLevel = () => {
     }
   };
 
+  const onImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = !!e.target.files ? e.target.files[0] : null;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (loadEvent) => {
+      if (loadEvent.target?.result) {
+        setSelectedImage(loadEvent.target?.result as string);
+        setValue("imageUrl", file);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleFileInput = () => {
+    if (!fileInputRef?.current || !fileInputRef?.current.click) return;
+    fileInputRef?.current?.click();
+  };
+
   return (
     <main className="flex-1">
       <h1 className="text-3xl mb-4">Cadastro de Ranking</h1>
@@ -40,14 +63,21 @@ const NewLevel = () => {
         className="flex flex-col gap-2"
         onSubmit={handleSubmit(handleCreateLevel)}
       >
-        <Input
-          placeholder="Insira o nome do ranking"
-          label="Capa"
+        <input
           type="file"
           accept="image/*"
+          className="hidden"
           multiple={false}
-          {...register("imageUrl", { required: true })}
-          errorMessage={errors.imageUrl && (errors.imageUrl.message as string)}
+          ref={fileInputRef}
+          onChange={onImageChange}
+        />
+        <Image
+          src={selectedImage}
+          alt="selected image"
+          width={200}
+          height={400}
+          className="rounded-xl min-w-full bg-primary h-72 cursor-pointer"
+          onClick={handleFileInput}
         />
         <Input
           placeholder="Insira o nome do ranking"
@@ -84,7 +114,11 @@ const NewLevel = () => {
           labelPlacement="outside"
           {...register("description")}
         />
-        <Button className="w-full mt-4 bg-secondary text-white" type="submit">
+        <Button
+          isLoading={isLoadingNewLevel}
+          className="w-full mt-4 bg-secondary text-white"
+          type="submit"
+        >
           Salvar
         </Button>
       </form>

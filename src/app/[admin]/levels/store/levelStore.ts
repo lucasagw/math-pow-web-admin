@@ -10,18 +10,23 @@ import { ILevel } from "@/app/common/types";
 import { storageService } from "@/app/common/services";
 // Schemas
 import { createLevelData } from "../schemas";
+import { toast } from "react-toastify";
 
 interface LevelState {
   isLoading: boolean;
+  isLoadingNewLevel: boolean;
+  isDeletingLevel: boolean;
   levels: ILevel[];
-  fetchAll: () => void;
-  findByTitleOrDescription: (key: string) => void;
-  storeLevel: (createLevelDto: createLevelData) => void;
-  deleteLevel: (uid: string) => void;
+  fetchAll: () => Promise<void>;
+  findByTitleOrDescription: (key: string) => Promise<void>;
+  storeLevel: (createLevelDto: createLevelData) => Promise<void>;
+  deleteLevel: (uid: string) => Promise<void>;
 }
 
 export const useLevelStore = create<LevelState>()((_set) => ({
+  isLoadingNewLevel: false,
   isLoading: false,
+  isDeletingLevel: false,
   levels: [],
   findByTitleOrDescription: async (key) => {
     _set({ isLoading: true });
@@ -35,32 +40,35 @@ export const useLevelStore = create<LevelState>()((_set) => ({
     }
   },
   storeLevel: async (createLevelData: createLevelData) => {
-    _set({ isLoading: true });
+    _set({ isLoadingNewLevel: true });
     try {
-      const fileList = createLevelData.imageUrl as FileList;
+      const file = createLevelData.imageUrl as File;
       const remoteUrl = await storageService.uploadFile(
-        fileList[0],
-        `/levels/${fileList[0].name}${uuidv4()}`
+        file,
+        `/levels/${file.name}${uuidv4()}`
       );
       const result: CreateLevelDTO = {
         ...createLevelData,
         imageUrl: remoteUrl,
       };
       await levelRepo.createLevel(result as CreateLevelDTO);
+      toast.success("Ranking cadastrado com sucesso!");
     } catch (error) {
       console.error("Error when we tried to store level", error);
+      toast.error("Ocorreu um erro ao cadastrar o rank");
     } finally {
-      _set({ isLoading: false });
+      _set({ isLoadingNewLevel: false });
     }
   },
   deleteLevel: async (uid: string) => {
-    _set({ isLoading: true });
+    _set({ isDeletingLevel: true });
     try {
       await levelRepo.deleteLevel(uid);
+      toast.success("Ranking deletado com sucesso!");
     } catch (error) {
       console.error("Error when we tried to store level", error);
     } finally {
-      _set({ isLoading: false });
+      _set({ isDeletingLevel: false });
     }
   },
   fetchAll: async () => {

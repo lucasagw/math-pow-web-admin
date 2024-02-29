@@ -1,5 +1,5 @@
 export interface ILevel {
-  uid?: string;
+  uid: string;
   imageUrl: string;
   title: string;
   description: string;

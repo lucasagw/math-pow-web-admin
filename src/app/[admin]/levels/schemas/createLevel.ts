@@ -28,17 +28,19 @@ export const createLevelSchema = z.object({
       required_error: "É necessário informar o intervalo de ínicio!",
     })
     .min(100, "O mínimo é 100!"),
-  imageUrl: z
-    .any()
-    .refine((files) => files?.length == 1, "Imagem é obrigatória.")
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
-    ),
+  imageUrl: z.any(),
+  // imageUrl: z
+  //   .any()
+  //   .refine((files) => files?.length == 1, "Imagem é obrigatória.")
+  //   .refine(
+  //     (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+  //     `Max file size is 5MB.`
+  //   )
+  //   .refine(
+  //     (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+  //     ".jpg, .jpeg, .png and .webp files are accepted."
+  //   )
+  //   .nullable(),
 });
 
 export type createLevelData = z.infer<typeof createLevelSchema>;
